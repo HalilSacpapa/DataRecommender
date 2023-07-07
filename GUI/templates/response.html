@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script>
+      function showTextField(selectedOption) {
+        if (selectedOption == "base1") {
+          document.getElementById("client-block").style.display = "block";
+          document.getElementById("check-block").style.display = "block";
+          document.getElementById("libelle-block").style.display = "none";
+        } else if (selectedOption == "base2") {
+          document.getElementById("client-block").style.display = "none";
+          document.getElementById("check-block").style.display = "none";
+          document.getElementById("libelle-block").style.display = "block";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container" style="padding-top:5%;">
+      <div class="row">
+        <div class="col-lg-4">
+          <h2 class="text-center">Recommender system</h2>
+          <form action="http://localhost:8000/" method="post">
+            <div class="form-group">
+              <label for="base">Which type of recommendation do you want ?</label>
+              <select class="form-control" id="base" name="base" onchange="showTextField(this.value)">
+                <option value="base1">Client based</option>
+                <option value="base2">Item based</option>
+              </select>
+            </div>
+            <div class="form-group" id="client-block">
+              <label for="client">Client ID :</label>
+              {% if client %}
+                <input type="number" class="form-control" id="client" name="client" value="{{ client }}">
+              {% else %}
+                <input type="number" class="form-control" id="client" name="client">
+              {% endif %}
+            </div>
+            <div class="form-group" id="libelle-block" style="display:none;">
+              <label for="libelle">Libelle :</label>
+              {% if libelle %}
+                <input type="text" class="form-control" id="libelle" name="libelle" value="{{ libelle }}">
+              {% else %}
+                <input type="text" class="form-control" id="libelle" name="libelle">
+              {% endif %}
+            </div>
+            <div class="form-group">
+              <label for="nb_art">Number of article to recommend :</label>
+              <input type="number" class="form-control" id="nb_art" name="nb_art">
+            </div>
+            <div class="form-group form-check" id="check-block">
+              <input type="checkbox" class="form-check-input" id="filtered" name="filtered">
+              <label class="form-check-label" for="filtered">
+                Filter recommended items depending on the client's previous purchases family, unverse and mesh.
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Recommand me !</button>
+          </form>
+        </div>
+
+        <div class="col-lg-8">
+          <h2 class="text-center">Results</h2>
+          <i>
+            {% if pref_f %}
+              The following results are filtered depending on the client's favorite family, unverse and mesh.<br/>
+              Theses statistics are based on client previous purchases :<br/>
+              <b>Family preference :</b> {{ ", ".join(pref_f) }}<br/>
+              <b>Universe preference :</b> {{ ", ".join(pref_u) }}<br/>
+              <b>Mesh preference :</b> {{ ", ".join(pref_m) }}<br/>
+              {% if month != None %}
+                The algorithm also found similar shopping pattern for this time of the year.
+                It recommend items that are usually bought on {{ month }}.
+              {% endif %}
+              {% if result == [] %}
+                <br/>
+                <b>Unfortunately, no results were found.<br/>Try without the filter option !</b>
+              {% endif %}
+              <br/><br/>
+            {% endif %}
+            {% if libelle %}
+              The following results have the highest similarity with the article "{{ libelle }}".
+              <br/><br/>
+            {% endif %}
+          </i>
+          {% if result %}
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Libelle</th>
+                  <th scope="col">Family</th>
+                  <th scope="col">Universe</th>
+                  <th scope="col">Mesh</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Similarity</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for elem in result %}
+                  <tr>
+                    <td>{{ elem[6] }}</td>
+                    <td>{{ elem[3] }}</td>
+                    <td>{{ elem[4] }}</td>
+                    <td>{{ elem[5] }}</td>
+                    <td>{{ elem[2] }}</td>
+                    <td>{{ elem[8] }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

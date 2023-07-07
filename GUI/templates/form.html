@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script>
+      function showTextField(selectedOption) {
+        if (selectedOption == "base1") {
+          document.getElementById("client-block").style.display = "block";
+          document.getElementById("check-block").style.display = "block";
+          document.getElementById("libelle-block").style.display = "none";
+        } else if (selectedOption == "base2") {
+          document.getElementById("client-block").style.display = "none";
+          document.getElementById("check-block").style.display = "none";
+          document.getElementById("libelle-block").style.display = "block";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container" style="padding-top:5%;">
+      <div class="row">
+        <div class="col-lg-4">
+          <h2 class="text-center">Recommender system</h2>
+          <form action="http://localhost:8000/" method="post">
+            <div class="form-group">
+              <label for="base">Which type of recommendation do you want ?</label>
+              <select class="form-control" id="base" name="base" onchange="showTextField(this.value)">
+                <option value="base1">Client based</option>
+                <option value="base2">Item based</option>
+              </select>
+            </div>
+            <div class="form-group" id="client-block">
+              <label for="client">Client ID :</label>
+              <input type="number" class="form-control" id="client" name="client">
+            </div>
+            <div class="form-group" id="libelle-block" style="display:none;">
+              <label for="libelle">Libelle :</label>
+              <input type="text" class="form-control" id="libelle" name="libelle">
+            </div>
+            <div class="form-group">
+              <label for="nb_art">Number of article to recommend :</label>
+              <input type="number" class="form-control" id="nb_art" name="nb_art">
+            </div>
+            <div class="form-group form-check" id="check-block">
+              <input type="checkbox" class="form-check-input" id="filtered" name="filtered">
+              <label class="form-check-label" for="filtered">
+                Filter recommended items depending on the client's previous purchases family, unverse and mesh.
+              </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Recommand me !</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
